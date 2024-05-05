@@ -23,8 +23,8 @@ export default async function handler(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
 
-  const siteName = searchParams.get('siteName');
-  const description = searchParams.get('description');
+  const name = searchParams.get('name');
+  const image = searchParams.get('image');
   const theme = searchParams.get('theme');
   const logo = searchParams.get('logo');
   const templateTitle = searchParams.get('templateTitle');
@@ -32,90 +32,106 @@ export default async function handler(req: NextRequest) {
   const logoHeight = searchParams.get('logoHeight');
 
   const query = {
-    siteName: siteName ?? 'Site Name',
-    description: description ?? 'Description',
+    name: name ?? 'Site Name',
+    image: image ?? `${deploymentURL}/images/doodle.png`,
     theme: theme ?? 'dark',
-    logo: logo ?? `${deploymentURL}/images/logo.jpg`,
+    logo: logo ?? `${deploymentURL}/images/card.png`,
     templateTitle,
     logoWidth: logoWidth ? +logoWidth : 100,
     logoHeight: logoHeight ? +logoHeight : undefined,
   };
 
+  const getImage = () => {
+    function randomIntFromInterval(min: number, max: number) {
+      // min and max included
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    const nonce = randomIntFromInterval(0, 5);
+    switch (nonce) {
+      case 0:
+        return {
+          path: `${deploymentURL}/images/card_1.png`,
+          nameColor: '#ffffff',
+        };
+      case 1:
+        return {
+          path: `${deploymentURL}/images/card_2.png`,
+          nameColor: '#ffffff',
+        };
+      case 2:
+        return {
+          path: `${deploymentURL}/images/card_3.png`,
+          nameColor: '#000000',
+        };
+      case 3:
+        return {
+          path: `${deploymentURL}/images/card_4.png`,
+          nameColor: '#ffffff',
+        };
+      case 4:
+        return {
+          path: `${deploymentURL}/images/card_5.png`,
+          nameColor: '#ffffff',
+        };
+      default:
+        return {
+          path: `${deploymentURL}/images/card_1.png`,
+          nameColor: '#ffffff',
+        };
+    }
+  };
+  const card = getImage();
+
   return new ImageResponse(
     (
       <div
         style={{
-          height: '100%',
-          width: '100%',
+          height: '1080px',
+          width: '1080px',
           fontFamily: 'Inter',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
-          padding: '0 5rem',
           backgroundColor: clsx(query.theme === 'dark' ? '#222' : '#fff'),
         }}
       >
         <img
-          style={{
-            width: query.logoWidth,
-            ...(query.logoHeight && { height: query.logoHeight }),
-          }}
-          src={query.logo}
+          style={{ width: '1080px', height: '1080px' }}
+          src={card.path}
           alt='Favicon'
-        />
-        {query.templateTitle ? (
-          <div
+        >
+          <h1
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
+              position: 'absolute',
+              bottom: '365px',
+              left: '172px',
+              fontSize: '30px',
+              color: card.nameColor,
             }}
           >
-            <h1
-              tw={clsx(
-                'mt-8',
-                'text-6xl font-bold',
-                query.theme === 'dark' ? 'text-white' : 'text-black'
-              )}
-            >
-              {query.templateTitle}
-            </h1>
-            <h3
-              tw={clsx(
-                'text-2xl font-bold',
-                query.theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-              )}
-            >
-              {query.siteName}
-            </h3>
-          </div>
-        ) : (
-          <h1
-            tw={clsx(
-              'mt-6',
-              'text-6xl font-bold',
-              query.theme === 'dark' ? 'text-white' : 'text-black'
-            )}
-          >
-            {query.siteName}
+            {query.name}
           </h1>
-        )}
-        <p
-          tw={clsx(
-            'text-3xl',
-            query.theme === 'dark' ? 'text-gray-300' : 'text-gray-800'
-          )}
-        >
-          {query.description}
-        </p>
+          <img
+            style={{
+              position: 'absolute',
+              bottom: '425px',
+              left: '172px',
+              width: '103px',
+              height: '103px',
+              borderRadius: 15,
+            }}
+            alt={`${deploymentURL}/images/doodle.png`}
+            src={query.image}
+          />
+        </img>
       </div>
     ),
     {
-      width: 1200,
-      height: 630,
+      width: 1080,
+      height: 1080,
       emoji: 'twemoji',
       fonts: [
         {

@@ -127,8 +127,8 @@ export default function BuildPage() {
                       src={imgLink}
                       className='w-full bg-gray-500'
                       alt=''
-                      width='1200'
-                      height='630'
+                      width='720'
+                      height='720'
                     />
                     <p className='mt-2 text-sm text-gray-600 break-all'>
                       {link}
